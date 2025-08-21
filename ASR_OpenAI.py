@@ -695,3 +695,63 @@ if three_shot_results:
     display(df_three_shot)
 else:
     print("\n⚠️ No three-shot transcription results were generated.")
+
+
+
+
+
+# Load results from each experiment
+try:
+    df_zero_shot = pd.read_csv("asr_zero_shot_results.csv")
+    df_zero_shot['prompt_type'] = 'zero-shot' # Ensure prompt_type is set
+    print("✅ Loaded zero-shot results.")
+except FileNotFoundError:
+    print("⚠️ Zero-shot results file not found (asr_zero_shot_results.csv). Skipping.")
+    df_zero_shot = pd.DataFrame() # Create empty DataFrame if file not found
+
+try:
+    df_one_shot = pd.read_csv("asr_one_shot_results.csv")
+    df_one_shot['prompt_type'] = 'one-shot' # Ensure prompt_type is set
+    print("✅ Loaded one-shot results.")
+except FileNotFoundError:
+    print("⚠️ One-shot results file not found (asr_one_shot_results.csv). Skipping.")
+    df_one_shot = pd.DataFrame() # Create empty DataFrame if file not found
+
+try:
+    df_two_shot = pd.read_csv("asr_two_shot_results.csv")
+    df_two_shot['prompt_type'] = 'two-shot' # Ensure prompt_type is set
+    print("✅ Loaded two-shot results.")
+except FileNotFoundError:
+    print("⚠️ Two-shot results file not found (asr_two_shot_results.csv). Skipping.")
+    df_two_shot = pd.DataFrame() # Create empty DataFrame if file not found
+
+try:
+    df_three_shot = pd.read_csv("asr_three_shot_results.csv")
+    df_three_shot['prompt_type'] = 'three-shot' # Ensure prompt_type is set
+    print("✅ Loaded three-shot results.")
+except FileNotFoundError:
+    print("⚠️ Three-shot results file not found (asr_three_shot_results.csv). Skipping.")
+    df_three_shot = pd.DataFrame() # Create empty DataFrame if file not found
+
+
+# Consolidate results into a single DataFrame
+all_results = pd.concat([df_zero_shot, df_one_shot, df_two_shot, df_three_shot], ignore_index=True)
+
+if not all_results.empty:
+    print("\n📊 Consolidated results from all experiments.")
+    # Calculate average WER for each prompt type
+    average_wer_by_prompt = all_results.groupby('prompt_type')['WER'].mean().sort_values()
+
+    print("\n📈 Average WER by Prompt Type (Sorted):")
+    display(average_wer_by_prompt)
+
+    # Optional: Display the full consolidated DataFrame
+    # print("\nFull consolidated results:")
+    # display(all_results)
+
+    # Optional: Save the consolidated results
+    # all_results.to_csv("asr_all_experiments_results.csv", index=False)
+    # print("\n✅ Consolidated results saved to asr_all_experiments_results.csv")
+
+else:
+    print("\n⚠️ No results were loaded or consolidated. Please ensure the individual experiment CSV files exist.")
